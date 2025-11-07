@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Marif Creation Order",
+  "description": "Chrome extension scaffold for managing creation order workflows.",
+  "version": "0.1.0",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Marif Creation Order"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": ["storage", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
+}
+

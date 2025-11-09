@@ -17,9 +17,12 @@ export function PopupContent({
   copyStatus,
   errorMessage,
   isLoading,
+  noteText,
   onSummaryChange,
   onSummaryCopy,
-  onWhatsappClick,
+  onSummaryWhatsappClick,
+  onNoteChange,
+  onNoteWhatsappClick,
   results,
   summaryText,
   targets,
@@ -103,12 +106,36 @@ export function PopupContent({
         <button
           type='button'
           style={WHATSAPP_BUTTON_STYLE}
-          onClick={onWhatsappClick}
+          onClick={onSummaryWhatsappClick}
           aria-label='Send summary via WhatsApp'
         >
           <span aria-hidden='true'>💬</span>
           Send via WhatsApp
         </button>
+      </section>
+
+      <section style={SUMMARY_SECTION_STYLE}>
+        <label htmlFor='popup-whatsapp-note' style={SUMMARY_LABEL_STYLE}>
+          WhatsApp note
+        </label>
+        <textarea
+          id='popup-whatsapp-note'
+          value={noteText}
+          onChange={onNoteChange}
+          style={TEXTAREA_STYLE}
+          aria-label='Editable WhatsApp note'
+        />
+        <div style={ACTIONS_SECTION_STYLE}>
+          <button
+            type='button'
+            style={WHATSAPP_BUTTON_STYLE}
+            onClick={onNoteWhatsappClick}
+            aria-label='Send WhatsApp note'
+          >
+            <span aria-hidden='true'>💬</span>
+            Send note via WhatsApp
+          </button>
+        </div>
       </section>
     </section>
   );

@@ -11,13 +11,13 @@ import { fetchDomTextContent } from '@services/dom-extractor';
 import { createLogger } from '@utils/logger';
 import { buildPopupSummary, resolveResultValue } from '@utils/popup-summary';
 import { buildWhatsappUrl } from '@utils/whatsapp';
+import { buildWhatsappNote } from '@utils/whatsapp-note';
 import type { DomTextResult } from '../../types/dom-target';
 import type { PopupCopyStatus } from '../../types/popup-copy-status';
 import { PopupContent } from './PopupContent';
 import { CONTAINER_STYLE } from './popup.styles';
 
 const logger = createLogger('popup');
-
 const getExtensionName = (): string => chrome.runtime.getManifest().name ?? 'Extension';
 
 export function Popup(): JSX.Element {
@@ -25,9 +25,9 @@ export function Popup(): JSX.Element {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [summaryText, setSummaryText] = useState<string>('');
+  const [noteText, setNoteText] = useState<string>('');
   const [customerPhone, setCustomerPhone] = useState<string>('');
   const [copyStatus, setCopyStatus] = useState<PopupCopyStatus>('idle');
-
   const copyResetTimeoutRef = useRef<number | null>(null);
 
   const clearCopyResetTimeout = (): void => {
@@ -52,25 +52,18 @@ export function Popup(): JSX.Element {
       try {
         const data = await fetchDomTextContent();
 
-        if (!isActive) {
-          return;
-        }
+        if (!isActive) return;
 
         setResults(data);
       } catch (error) {
-        if (!isActive) {
-          return;
-        }
+        if (!isActive) return;
 
         logger.error('Failed to load DOM text content', error);
 
-        const message =
-          error instanceof Error ? error.message : 'Unexpected error occurred';
+        const message = error instanceof Error ? error.message : 'Unexpected error occurred';
         setErrorMessage(message);
       } finally {
-        if (!isActive) {
-          return;
-        }
+        if (!isActive) return;
 
         setIsLoading(false);
       }
@@ -90,17 +83,18 @@ export function Popup(): JSX.Element {
   useEffect(() => {
     if (results.length === 0) {
       setSummaryText('');
+      setNoteText('');
       setCustomerPhone('');
       return;
     }
 
     setSummaryText(buildPopupSummary(results));
     setCustomerPhone(resolveResultValue(results, 'customer-phone') ?? '');
+    setNoteText(buildWhatsappNote(resolveResultValue(results, 'pricing-text')));
   }, [results]);
 
-  const handleSummaryChange = (event: ChangeEvent<HTMLTextAreaElement>): void => {
+  const handleSummaryChange = (event: ChangeEvent<HTMLTextAreaElement>): void =>
     setSummaryText(event.target.value);
-  };
 
   const handleSummaryCopy = async (
     event: MouseEvent<HTMLButtonElement>,
@@ -126,16 +120,14 @@ export function Popup(): JSX.Element {
     }
   };
 
-  const handleWhatsappClick = (event: MouseEvent<HTMLButtonElement>): void => {
-    event.preventDefault();
-
+  const sendWhatsappMessage = (message: string): void => {
     const phone = customerPhone.trim();
     if (phone.length === 0) {
       logger.warn('Unable to send WhatsApp message: missing phone number');
       return;
     }
 
-    const url = buildWhatsappUrl(phone, summaryText);
+    const url = buildWhatsappUrl(phone, message);
 
     if (!url) {
       logger.warn('Unable to send WhatsApp message: invalid phone number', {
@@ -147,6 +139,19 @@ export function Popup(): JSX.Element {
     void chrome.tabs.create({ url });
   };
 
+  const handleSummaryWhatsappClick = (event: MouseEvent<HTMLButtonElement>): void => {
+    event.preventDefault();
+    sendWhatsappMessage(summaryText);
+  };
+
+  const handleNoteChange = (event: ChangeEvent<HTMLTextAreaElement>): void =>
+    setNoteText(event.target.value);
+
+  const handleNoteWhatsappClick = (event: MouseEvent<HTMLButtonElement>): void => {
+    event.preventDefault();
+    sendWhatsappMessage(noteText);
+  };
+
   return (
     <main style={CONTAINER_STYLE}>
       <header>
@@ -156,9 +161,12 @@ export function Popup(): JSX.Element {
         copyStatus={copyStatus}
         errorMessage={errorMessage}
         isLoading={isLoading}
+        noteText={noteText}
         onSummaryChange={handleSummaryChange}
         onSummaryCopy={handleSummaryCopy}
-        onWhatsappClick={handleWhatsappClick}
+        onSummaryWhatsappClick={handleSummaryWhatsappClick}
+        onNoteChange={handleNoteChange}
+        onNoteWhatsappClick={handleNoteWhatsappClick}
         results={results}
         summaryText={summaryText}
         targets={DOM_TARGETS}

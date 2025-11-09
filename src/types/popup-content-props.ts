@@ -8,9 +8,12 @@ export interface PopupContentProps {
   isLoading: boolean;
   onSummaryChange: (event: ChangeEvent<HTMLTextAreaElement>) => void;
   onSummaryCopy: (event: MouseEvent<HTMLButtonElement>) => Promise<void> | void;
-  onWhatsappClick: (event: MouseEvent<HTMLButtonElement>) => void;
+  onSummaryWhatsappClick: (event: MouseEvent<HTMLButtonElement>) => void;
+  onNoteChange: (event: ChangeEvent<HTMLTextAreaElement>) => void;
+  onNoteWhatsappClick: (event: MouseEvent<HTMLButtonElement>) => void;
   results: DomTextResult[];
   summaryText: string;
+  noteText: string;
   targets: DomTarget[];
 }
 

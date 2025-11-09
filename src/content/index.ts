@@ -1,4 +1,7 @@
 import { MESSAGE_TYPES } from '@constants/messaging';
+import { PRODUCT_NAME_MAPPINGS } from '@constants/product-name-mapping';
+import { normalizePlateNumber } from '@utils/plate-number';
+import { normalizePhoneNumber } from '@utils/phone-number';
 import type { DomTarget, DomTextResult } from '../types/dom-target';
 import type { DomTextRequestMessage } from '../types/messages';
 import { createLogger } from '@utils/logger';
@@ -26,13 +29,56 @@ const resolveElement = (target: DomTarget): Element | null => {
   }
 };
 
-const CUSTOMER_DETAIL_TARGET_IDS = new Set<string>([
-  'customer-name',
-  'customer-address',
-  'customer-city',
-  'customer-country',
-  'customer-phone'
-]);
+const CUSTOMER_DETAIL_TARGET_IDS = new Set<string>(['customer-name', 'customer-address', 'customer-phone']);
+
+const escapeForRegExp = (value: string): string =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+const sanitizeAddressSegments = (value: string): string =>
+  value
+    .split(',')
+    .map((part) => part.trim())
+    .filter((part) => part.length > 0)
+    .join(', ');
+
+const removeLocationFragment = (address: string, fragment: string | null): string => {
+  if (!fragment) {
+    return address;
+  }
+
+  const pattern = new RegExp(`\\b${escapeForRegExp(fragment)}\\b`, 'gi');
+  const withoutFragment = address.replace(pattern, ' ');
+
+  return sanitizeAddressSegments(withoutFragment);
+};
+
+const appendLocationFragments = (
+  address: string,
+  fragments: Array<string | null>
+): string => {
+  const baseSegments = address.length > 0 ? address.split(', ') : [];
+
+  const addSegmentIfMissing = (segment: string): void => {
+    if (
+      !baseSegments.some(
+        (existing) => existing.localeCompare(segment, undefined, { sensitivity: 'accent' }) === 0
+      )
+    ) {
+      baseSegments.push(segment);
+    }
+  };
+
+  fragments
+    .map((fragment) => fragment?.trim())
+    .filter((fragment): fragment is string => Boolean(fragment && fragment.length > 0))
+    .forEach((fragment) => {
+      if (!new RegExp(`\\b${escapeForRegExp(fragment)}\\b`, 'i').test(address)) {
+        addSegmentIfMissing(fragment);
+      }
+    });
+
+  return baseSegments.join(', ');
+};
 
 const replaceBreaksWithNewlines = (element: Element): void => {
   const breakNodes = element.querySelectorAll('br');
@@ -151,11 +197,16 @@ const deriveCustomerDetailValue = (targetId: string, lines: string[]): string | 
     case 'customer-name':
       return name;
     case 'customer-address':
-      return address;
-    case 'customer-city':
-      return city;
-    case 'customer-country':
-      return country;
+      if (!address && !city && !country) {
+        return null;
+      }
+
+      const baseAddress = address ?? '';
+      const withoutCity = removeLocationFragment(baseAddress, city);
+      const withoutCountry = removeLocationFragment(withoutCity, country);
+      const sanitizedAddress = sanitizeAddressSegments(withoutCountry);
+
+      return appendLocationFragments(sanitizedAddress, [city, country]);
     case 'customer-phone':
       return phone;
     default:
@@ -171,6 +222,14 @@ const applyTextTransform = (value: string | null, transform?: DomTarget['textTra
   switch (transform) {
     case 'stripRsPrefix':
       return value.replace(/^Rs\s*/i, '');
+    case 'normalizeProductName': {
+      const trimmedValue = value.trim();
+      return PRODUCT_NAME_MAPPINGS[trimmedValue] ?? trimmedValue;
+    }
+    case 'normalizePlateNumber':
+      return normalizePlateNumber(value);
+    case 'normalizePhoneNumber':
+      return normalizePhoneNumber(value);
     default:
       return value;
   }

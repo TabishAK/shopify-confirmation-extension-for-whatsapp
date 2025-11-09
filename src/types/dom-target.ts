@@ -1,6 +1,10 @@
 export type DomSelectionStrategy = 'id' | 'class' | 'selector';
 
-export type DomTextTransform = 'stripRsPrefix';
+export type DomTextTransform =
+  | 'stripRsPrefix'
+  | 'normalizeProductName'
+  | 'normalizePlateNumber'
+  | 'normalizePhoneNumber';
 
 export interface LineExtractionOptions {
   startIndex: number;

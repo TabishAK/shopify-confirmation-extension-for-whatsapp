@@ -16,6 +16,7 @@ export const DOM_TARGETS: DomTarget[] = [
     label: 'Plate number',
     strategy: 'class',
     value: '_WordWrap_2u7z6_1',
+    textTransform: 'normalizePlateNumber',
   },
   {
     id: 'pricing-text',
@@ -31,6 +32,7 @@ export const DOM_TARGETS: DomTarget[] = [
     strategy: 'selector',
     value:
       '.Polaris-Link.Polaris-Link--monochrome.Polaris-Link--removeUnderline',
+    textTransform: 'normalizeProductName',
   },
 
   {
@@ -46,21 +48,22 @@ export const DOM_TARGETS: DomTarget[] = [
     value: CUSTOMER_DETAILS_SELECTOR,
   },
   {
-    id: 'customer-city',
-    label: 'Customer city',
-    strategy: 'selector',
-    value: CUSTOMER_DETAILS_SELECTOR,
-  },
-  {
-    id: 'customer-country',
-    label: 'Customer country',
-    strategy: 'selector',
-    value: CUSTOMER_DETAILS_SELECTOR,
-  },
-  {
     id: 'customer-phone',
     label: 'Customer phone',
     strategy: 'selector',
     value: CUSTOMER_DETAILS_SELECTOR,
+    textTransform: 'normalizePhoneNumber',
   },
 ];
+
+
+// Sindh Ajrak New Style (White) Upper Side Embossed Replica Number Plate = Sindh Ajrak New Style (White)
+// All Punjab Upper Side Embossed Replica Number Plate = Punjab New Style (Car)
+// Islamabad Style Upped Side Embossed Replica Number Plate = Islamabad New Style (Car)
+// Punjab Old Style Upper Side Embossed Number Plate = Punjab Green Patti
+// Sindh Ajrak Style Yellow Upper Side Embossed Replica Number Plate (Commercial) = Yellow Commercial Ajrak new Style
+// Sindh Ajrak Style Replica Upper side Embossed Number Plates (Bike) = Sindh Ajrak new Style (Bike)
+// Punjab Style Upper Side Embossed Replica Number Plates (Bike) = Punjab New Style (Bike)
+// Premium Quality Sindh Ajrak New Style (White) Upper Side Embossed Replica Number Plate = Sindh Ajrak New Style (White) Premium Quality Charges 3000/-
+// Premium Quality Punjab Style (White) Upper Side Embossed Replica Number Plate = Punjab Green Patti Premium Quality Charges 3000/-
+// Premium Quality Sindh Ajrak New Style (White) Upper Side Embossed Replica Number Plate For Bike = Sindh Ajrak New Style (Bike) Premium Quality Charges 2000/-

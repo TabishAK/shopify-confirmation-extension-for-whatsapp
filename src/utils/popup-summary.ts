@@ -16,17 +16,6 @@ export const resolveResultValue = (
   return value && value.length > 0 ? value : null;
 };
 
-const buildCityCountryLine = (results: DomTextResult[]): string | null => {
-  const city = resolveResultValue(results, 'customer-city');
-  const country = resolveResultValue(results, 'customer-country');
-
-  if (city && country) {
-    return `${city}, ${country}`;
-  }
-
-  return city ?? country ?? null;
-};
-
 const normalizeValue = (value: string | null): string =>
   value && value.length > 0 ? value : DEFAULT_PLACEHOLDER;
 
@@ -35,16 +24,26 @@ export const buildPopupSummary = (results: DomTextResult[]): string => {
     return '';
   }
 
-  const orderedValues: Array<string | null> = [
-    resolveResultValue(results, 'word-wrap-text'),
-    resolveResultValue(results, 'product-name'),
-    resolveResultValue(results, 'customer-address'),
-    resolveResultValue(results, 'customer-phone'),
-    buildCityCountryLine(results),
-    resolveResultValue(results, 'customer-name'),
-    resolveResultValue(results, 'np-number')
-  ];
+  const plateNumber = resolveResultValue(results, 'word-wrap-text');
+  const productName = resolveResultValue(results, 'product-name');
+  const address = resolveResultValue(results, 'customer-address');
+  const phone = resolveResultValue(results, 'customer-phone');
+  const customerName = resolveResultValue(results, 'customer-name');
+  const npNumber = resolveResultValue(results, 'np-number');
 
-  return orderedValues.map(normalizeValue).join('\n').trim();
+  const sections: string[] = [];
+
+  const headerSection = [plateNumber, productName].map(normalizeValue).join('\n');
+  sections.push(headerSection);
+
+  const addressSection = normalizeValue(address);
+  sections.push(`\n${addressSection}\n`);
+
+  const footerSection = [phone, customerName, npNumber]
+    .map(normalizeValue)
+    .join('\n');
+  sections.push(footerSection);
+
+  return sections.join('\n').trim();
 };
 

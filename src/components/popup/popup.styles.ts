@@ -40,7 +40,7 @@ export const SUMMARY_LABEL_STYLE: CSSProperties = {
 
 export const TEXTAREA_STYLE: CSSProperties = {
   width: '95%',
-  minHeight: 160,
+  minHeight: 190,
   padding: '10px',
   resize: 'vertical',
   borderRadius: '6px',
@@ -108,3 +108,6 @@ export const COPY_FEEDBACK_STYLE: CSSProperties = {
   boxShadow: '0 4px 12px rgba(15, 23, 42, 0.15)',
   pointerEvents: 'none',
 };
+
+
+

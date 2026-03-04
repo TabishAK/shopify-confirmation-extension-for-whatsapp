@@ -1,15 +1,13 @@
 import type { DomTarget } from '../types/dom-target';
 
-const CUSTOMER_DETAILS_SELECTOR =
-  '.Polaris-Box > div > .Polaris-InlineStack > p';
+const CUSTOMER_DETAILS_SELECTOR = '.Polaris-Box > div > .Polaris-InlineStack > p';
 
 export const DOM_TARGETS: DomTarget[] = [
   {
     id: 'np-number',
     label: 'NP Number',
     strategy: 'selector',
-    value:
-      '.Polaris-Text--root.Polaris-Text--headingLg.Polaris-Text--semibold.Polaris-Text--base',
+    value: '.Polaris-Text--root.Polaris-Text--headingLg.Polaris-Text--semibold.Polaris-Text--base',
   },
   {
     id: 'word-wrap-text',
@@ -22,16 +20,14 @@ export const DOM_TARGETS: DomTarget[] = [
     id: 'pricing-text',
     label: 'Price',
     strategy: 'selector',
-    value:
-      '.Polaris-InlineStack .Polaris-Text--root.Polaris-Text--bodyMd.Polaris-Text--regular.Polaris-Text--breakNever.Polaris-Text--base.Polaris-Text--numeric',
+    value: '.Polaris-InlineStack .Polaris-Text--root.Polaris-Text--bodyMd.Polaris-Text--regular.Polaris-Text--breakNever.Polaris-Text--base.Polaris-Text--numeric',
     textTransform: 'stripRsPrefix',
   },
   {
     id: 'product-name',
     label: 'Product Name',
     strategy: 'selector',
-    value:
-      '.Polaris-Link.Polaris-Link--monochrome.Polaris-Link--removeUnderline',
+    value: '.Polaris-Link.Polaris-Link--monochrome.Polaris-Link--removeUnderline',
     textTransform: 'normalizeProductName',
   },
 

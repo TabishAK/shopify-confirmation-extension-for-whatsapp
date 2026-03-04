@@ -15,7 +15,7 @@ export const DOM_TARGETS: DomTarget[] = [
     id: 'word-wrap-text',
     label: 'Plate number',
     strategy: 'class',
-    value: '_WordWrap_2u7z6_1',
+    value: '_WordWrap_my6u6_1',
     textTransform: 'normalizePlateNumber',
   },
   {

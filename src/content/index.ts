@@ -224,7 +224,13 @@ const applyTextTransform = (value: string | null, transform?: DomTarget['textTra
       return value.replace(/^Rs\s*/i, '');
     case 'normalizeProductName': {
       const trimmedValue = value.trim();
-      return PRODUCT_NAME_MAPPINGS[trimmedValue] ?? trimmedValue;
+      const resolved = PRODUCT_NAME_MAPPINGS[trimmedValue] ?? trimmedValue;
+      return resolved
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0)
+        .map((line) => `*${line}*`)
+        .join('\n');
     }
     case 'normalizePlateNumber':
       return normalizePlateNumber(value);

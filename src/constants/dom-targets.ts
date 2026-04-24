@@ -27,7 +27,9 @@ export const DOM_TARGETS: DomTarget[] = [
     id: 'product-name',
     label: 'Product Name',
     strategy: 'selector',
-    value: '.Polaris-Link.Polaris-Link--monochrome.Polaris-Link--removeUnderline',
+    // Product title lives on <s-internal-link> in light DOM; the visible <a> is inside shadow DOM
+    // and is not visible to document.querySelector from the page root.
+    value: 's-internal-heading s-internal-link[href*="/products/"]',
     textTransform: 'normalizeProductName',
   },
 
@@ -53,13 +55,16 @@ export const DOM_TARGETS: DomTarget[] = [
 ];
 
 
-// Sindh Ajrak New Style (White) Upper Side Embossed Replica Number Plate = Sindh Ajrak New Style (White)
+// Sindh Ajrak New Style (White) Upper Side Embossed Replica Number Plate = Sindh Ajrak New Style (Car)
+// Islamabad New Style Replica Upper side Embossed Number Plates (Bike) = Islamabad New Style (Bike)
 // All Punjab Upper Side Embossed Replica Number Plate = Punjab New Style (Car)
 // Islamabad Style Upped Side Embossed Replica Number Plate = Islamabad New Style (Car)
 // Punjab Old Style Upper Side Embossed Number Plate = Punjab Green Patti
 // Sindh Ajrak Style Yellow Upper Side Embossed Replica Number Plate (Commercial) = Yellow Commercial Ajrak new Style
 // Sindh Ajrak Style Replica Upper side Embossed Number Plates (Bike) = Sindh Ajrak new Style (Bike)
 // Punjab Style Upper Side Embossed Replica Number Plates (Bike) = Punjab New Style (Bike)
-// Premium Quality Sindh Ajrak New Style (White) Upper Side Embossed Replica Number Plate = Sindh Ajrak New Style (White) Premium Quality Charges 3000/-
 // Premium Quality Punjab Style (White) Upper Side Embossed Replica Number Plate = Punjab Green Patti Premium Quality Charges 3000/-
-// Premium Quality Sindh Ajrak New Style (White) Upper Side Embossed Replica Number Plate For Bike = Sindh Ajrak New Style (Bike) Premium Quality Charges 2000/-
+// Premium Quality Sindh Ajrak New Style (White) Upper Side Embossed Replica Number Plate = Sindh Ajrak New Style (Car) + newline + Premium Quality charges 3000/-
+// Premium Quality Sindh Ajrak New Style (White) Upper Side Embossed Replica Number Plate  For Bike = Sindh Ajrak New Style (Bike) + newline + Premium Quality charges 2000/-
+
+// (Also mapped: single space before For Bike — same bike output as above.)
